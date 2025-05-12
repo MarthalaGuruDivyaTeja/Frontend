@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import AdminNavBar from './AdminNavBar';
-import AddReport from '../faculty/AddReport';
+import FacultyNavBar from './FacultyNavBar';
 
 export default function ViewReports() {
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
-    const storedReports = localStorage.getItem('studentReports');
-    if (storedReports) {
-      setReports(JSON.parse(storedReports));
-    }
+    const storedReports = JSON.parse(localStorage.getItem('studentReports')) || [];
+    setReports(storedReports);
   }, []);
 
   return (
     <div>
-      <AdminNavBar />
-      <div className="container">
+      <FacultyNavBar />
+      <div className="table-container">
         <h2>Student Reports</h2>
         {reports.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#777' }}>No reports available.</p>
@@ -23,7 +20,7 @@ export default function ViewReports() {
           <table>
             <thead>
               <tr>
-                <th>Name</th>
+                <th>Student Name</th>
                 <th>Roll Number</th>
                 <th>Subject</th>
                 <th>Marks</th>
@@ -31,8 +28,8 @@ export default function ViewReports() {
               </tr>
             </thead>
             <tbody>
-              {reports.map((report) => (
-                <tr key={report.id}>
+              {reports.map((report, index) => (
+                <tr key={index}>
                   <td>{report.studentName}</td>
                   <td>{report.rollNumber}</td>
                   <td>{report.subject}</td>
@@ -46,13 +43,19 @@ export default function ViewReports() {
       </div>
 
       <style jsx>{`
-        .container {
+        .table-container {
           max-width: 800px;
           margin: 20px auto;
           padding: 20px;
-          background: #fff;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          background-color: #f9f9f9;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+          text-align: center;
+          color: #333;
         }
 
         table {
@@ -73,7 +76,7 @@ export default function ViewReports() {
         }
 
         tr:nth-child(even) {
-          background-color: #f9f9f9;
+          background-color: #f2f2f2;
         }
       `}</style>
     </div>

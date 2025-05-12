@@ -1,53 +1,46 @@
 import React, { useEffect, useState } from 'react';
-import AdminNavBar from './AdminNavBar';
+import FacultyNavBar from './FacultyNavBar';
 
 export default function ViewStudents() {
   const [students, setStudents] = useState([]);
-  const [error, setError] = useState('');
 
   useEffect(() => {
-    const loadStudents = () => {
+    const storedStudents = localStorage.getItem('students');
+    if (storedStudents) {
       try {
-        const storedStudents = localStorage.getItem('students');
-        if (storedStudents) {
-          setStudents(JSON.parse(storedStudents));
-        } else {
-          setStudents([]);
-        }
-      } catch (err) {
-        setError('Failed to load students from localStorage');
-        console.error(err);
+        const parsed = JSON.parse(storedStudents);
+        setStudents(Array.isArray(parsed) ? parsed : []);
+      } catch (e) {
+        console.error("Error parsing students from localStorage", e);
+        setStudents([]);
       }
-    };
-
-    loadStudents();
+    }
   }, []);
 
   return (
     <div>
-      <AdminNavBar />
+      <FacultyNavBar />
       <div className="table-container">
-        <h2>Student List</h2>
-        {error && <p className="error">{error}</p>}
+        <h2>Students</h2>
         {students.length === 0 ? (
-          <p style={{ textAlign: 'center' }}>No students found.</p>
+          <p style={{ textAlign: 'center', color: '#888' }}>No student records available.</p>
         ) : (
           <table>
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Roll Number</th>
+                <th>Roll No</th>
                 <th>Class</th>
                 <th>Email</th>
               </tr>
             </thead>
             <tbody>
-              {students.map((student, index) => (
+              {students.map((s, index) => (
                 <tr key={index}>
-                  <td>{student.name || 'N/A'}</td>
-                  <td>{student.rollNumber || 'N/A'}</td>
-                  <td>{student.className || 'N/A'}</td>
-                  <td>{student.email || 'N/A'}</td>
+                  <td>{s.name || 'N/A'}</td>
+                  <td>{s.rollNumber || 'N/A'}</td>
+                  <td>{s.className || s.studentClass || 'N/A'}</td>
+                  <td>{s.email || 'N/A'}</td>
                 </tr>
               ))}
             </tbody>
@@ -58,15 +51,17 @@ export default function ViewStudents() {
       <style jsx>{`
         .table-container {
           max-width: 800px;
-          margin: 0 auto;
+          margin: 20px auto;
           padding: 20px;
           border: 1px solid #ccc;
           border-radius: 5px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          background-color: #f9f9f9;
         }
 
         h2 {
           text-align: center;
+          color: #333;
         }
 
         table {
@@ -76,9 +71,9 @@ export default function ViewStudents() {
         }
 
         th, td {
+          border: 1px solid #ccc;
           padding: 10px;
           text-align: left;
-          border-bottom: 1px solid #ddd;
         }
 
         th {
@@ -86,9 +81,8 @@ export default function ViewStudents() {
           color: white;
         }
 
-        .error {
-          color: red;
-          text-align: center;
+        tr:nth-child(even) {
+          background-color: #f2f2f2;
         }
       `}</style>
     </div>
